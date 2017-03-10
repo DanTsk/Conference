@@ -54,13 +54,12 @@ public class ConferenceApi {
         String mainEmail = null;
         String displayName = "Your name will go here";
         TeeShirtSize teeShirtSize = TeeShirtSize.NOT_SPECIFIED;
-
  
         if(user == null)  
         	throw new UnauthorizedException("Not auth. user"); 
 
-
-        teeShirtSize = profileForm.getTeeShirtSize();
+        teeShirtSize = profileForm.getTeeShirtSize(); 
+        
         if(profileForm.getDisplayName() != null) 
         	displayName = profileForm.getDisplayName();
         else 
@@ -68,7 +67,8 @@ public class ConferenceApi {
         
 
         userId = user.getUserId();
-        mainEmail = user.getEmail();
+        mainEmail = user.getEmail();       
+        
 
         // TODO 2
         // If the displayName is null, set it to default value based on the user's email
@@ -78,12 +78,16 @@ public class ConferenceApi {
         
 
         // Create a new Profile entity from the
-        // userId, displayName, mainEmail and teeShirtSize
-        Profile profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        // userId, displayName, mainEmail and teeShirtSize        
+        Profile profile = getProfile(user);
+        if (profile == null)
+        	profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        else
+        	profile.update(displayName,teeShirtSize);
 
         // TODO 3 (In Lesson 3)
         // Save the Profile entity in the datastore
-
+        ofy().save().entity(profile).now();
         // Return the profile
         return profile;
     }
@@ -102,12 +106,12 @@ public class ConferenceApi {
     public Profile getProfile(final User user) throws UnauthorizedException {
         if (user == null) {
             throw new UnauthorizedException("Authorization required");
-        }
+        }       
 
         String userId = user.getUserId();
         Key<Profile> key = Key.create(Profile.class, userId);
-        Profile profile = (Profile) ofy().load().key(key).now();
-
+        Profile profile = (Profile) ofy().load().key(key).now();     
+        
         return profile;
     }
 }
