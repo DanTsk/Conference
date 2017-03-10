@@ -58,7 +58,9 @@ public class ConferenceApi {
         if(user == null)  
         	throw new UnauthorizedException("Not auth. user"); 
 
-        teeShirtSize = profileForm.getTeeShirtSize(); 
+        
+        if(profileForm.getTeeShirtSize()!=null)
+         teeShirtSize = profileForm.getTeeShirtSize(); 
         
         if(profileForm.getDisplayName() != null) 
         	displayName = profileForm.getDisplayName();
